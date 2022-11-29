@@ -1,6 +1,6 @@
 //création des éléments
 
-let new_main = document.createElement("main"), // crée un élément <main>
+const new_main = document.createElement("main"), // crée un élément <main>
   //   new_button = document.createElement("button"), // crée un élément <button>
   new_table = document.createElement("table"); // crée un élément <table>
 // new_tr = document.createElement("tr"), // crée un élément <tr> (row)
@@ -17,10 +17,10 @@ new_main.append(new_table); // ajoute l'élément new_table au body en dernier e
 function table_creation(row, column) {
   if (!new_table.hasChildNodes()) {
     for (let index = 0; index < row; index++) {
-      let new_tr = document.createElement("tr");
+      const new_tr = document.createElement("tr");
       new_table.append(new_tr);
       for (let index = 0; index < column; index++) {
-        let new_td = document.createElement("td");
+        const new_td = document.createElement("td");
         new_tr.append(new_td);
       }
     }
@@ -84,23 +84,20 @@ let data = [
 // Affiche les données d'un array a 2 dimension (array[arrays]) dans un tableau HTML
 function data_to_HTML_table(array) {
   table_creation(array.length, array[0].length);
-  for (let index = 0; index < new_table.rows.length; index++) {
-    let row_index = new_table.rows[index],
-      array_index = array[index];
-    // row_index.textContent = data[index][index];
-    for (let index = 0; index < row_index.cells.length; index++) {
-      row_index.cells[index].textContent = array_index[index];
+  for (let i = 0; i < new_table.rows.length; i++) {
+    for (let j = 0; j < new_table.rows[i].cells.length; j++) {
+      new_table.rows[i].cells[j].textContent = array[i][j];
     }
   }
 }
 
-function add_produit(str, price_1, price_2, price_3) {
+function add_produit(produit, price_1, price_2, price_3) {
   data.push([]);
   let last_data_index = data.length - 1;
-  for (let index = 0; index < data.length; index++) {
+  for (let index = 0; index < data[0].length; index++) {
     switch (index) {
       case 0:
-        data[last_data_index][index] = str;
+        data[last_data_index][index] = produit;
         break;
       case 1:
         data[last_data_index][index] = price_1;
@@ -120,27 +117,48 @@ function add_produit(str, price_1, price_2, price_3) {
 
 // fonction qui renvoie le prix d'un produit demandé et au mois demandé // -> a terminé
 function print_data_from_str(produit, mois) {
-  // let produit_asked, prix, mois_asked;
-
-  // data.forEach((element) => {
-  //   element.forEach((element) => {
-  //     if (condition) {
-  //     }
-  //   });
-  // });
-
+  let data_index_for_produit, data_index_for_mois, produit_index, mois_index;
+  data.forEach((element) => {
+    if (element.indexOf(produit) >= 0) {
+      data_index_for_produit = data.indexOf(element);
+      produit_index = element.indexOf(produit);
+    } else if (element.indexOf(mois) >= 0) {
+      data_index_for_mois = data.indexOf(element);
+      mois_index = element.indexOf(mois);
+    }
+  });
   return (
     "Le " +
     data[0][0] +
     " " +
-    data[1][0] +
+    data[data_index_for_produit][produit_index] +
     " coutait " +
-    data[1][1] +
-    "euros le kilo en " +
-    data[0][1]
+    data[data_index_for_produit][mois_index] +
+    "€ le kilo en " +
+    data[data_index_for_mois][mois_index]
   );
 }
 
+function prix_des_produits() {
+  for (let i = 1; i < data.length; i++) {
+    for (let j = 1; j < data[0].length; j++) {
+      console.log(
+        "Le " +
+          data[0][0] +
+          " " +
+          data[i][0] +
+          " coutait " +
+          data[i][j] +
+          "€ le kilo en " +
+          data[0][j] +
+          "."
+      );
+    }
+  }
+}
+
 data_to_HTML_table(data);
-console.log(print_data_from_str());
 add_produit("Tomate", 4.34, 3.13, 2.77);
+add_produit("Champignons", 3.25, 2.48, 2.17);
+prix_des_produits();
+console.log(print_data_from_str("Fraise", "Juin"));
